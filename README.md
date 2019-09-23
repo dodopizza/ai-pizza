@@ -1,4 +1,4 @@
-:authors:
+# Authors
 
 Golodyayev Arseniy:
   – MIPT, Skoltech
@@ -9,12 +9,12 @@ Egor Baryshnikov:
   – bar.e.s@icloud.com
   
  
-:init:
+# Init
 
 The story of one model that generates kitchen recipes.
 
 
-:description:
+# Description
 
   – /model_generatin_example.ipynb/ jupyter notebook which recipe generation
   
@@ -22,7 +22,7 @@ The story of one model that generates kitchen recipes.
   
   – /topic_modeling.ipynb/ recipe clasterization with NLP
 
-_pizza_net_ READ.ME
+# _pizza_net_ README
 
 
 Neural networks are gradually conquering the world, but not as a Skynet, but as a powerful tool. There are many uses for this marvelous data mining architecture, many of which are not obvious. Below we will talk about one of these applications. Pizza Recipe Generator.
@@ -31,7 +31,8 @@ We perfectly understand that there is no limit to perfection, and you can always
 
 
 there is no machine learning without data.
-DATASET:
+
+# Dataset
 
 really hard part of whole project. because of big variation in ingredients name and their bigrams and trigrams. for example pepper we found not only this word in recipes. 
 – red pepper 
@@ -80,7 +81,7 @@ This histogram show that, desert(blues) will perfectly represent topic 0 and 1. 
 
 So we can say that real recipe groups can be divided into clusters or groups semantically quete perfect.
 
-DEEP LEARNING:
+# Deep learning
 
 We assumed that in whole recipe space exists semi space which represent pizza or other classes.
 
@@ -105,20 +106,14 @@ But it’s not all. If you remember MIT pepper they write big article about mole
 
 
 
-Evaluating:
+# Evaluating
 
-Most of recieved recipes 
-pizza:
+Most of recieved recipes
 
+* pizza: water, milk, cream_cheese, cheese, olive_oil, chicken, pepper, mozzarella_cheese, pepper, 
 
-water, milk, cream_cheese, cheese, olive_oil, chicken, pepper, mozzarella_cheese, pepper, 
+* pizza: tomato, egg, milk, olive_oil, olive, garlic, cheese, mozzarella_cheese, black_pepper, chicken, 
 
-
-pizza:
-tomato, egg, milk, olive_oil, olive, garlic, cheese, mozzarella_cheese, black_pepper, chicken, 
-
-
-pizza:
-turkey, parmesan_cheese, cheese, mozzarella_cheese, oil, garlic, tomato, black_pepper, 
+* pizza: turkey, parmesan_cheese, cheese, mozzarella_cheese, oil, garlic, tomato, black_pepper, 
 
 Pretty conservative but it’s good result for model. It means that it correctly find pizza semispace. but if we generate more, we will find interesting results……
