@@ -1,119 +1,106 @@
-# Authors
+Still, nobody knows if a machine can create something new or it is limited to what it already knows. But even now, artificial intelligence can solve complicated problems and analyze unstructured data sets.
+We at Dodo decided to run an experiment. To organize and structurally describe something that is considered chaotic and subjective — the taste. We decided to use artificial intelligence to find the wildest combinations of ingredients that nevertheless will be considered delicious by most of the people.
 
-Golodyayev Arseniy:
-  – MIPT, Skoltech
-  – golodyaev.aa@gmail.com
-  
-Egor Baryshnikov:
-  – Skoltech
-  – bar.e.s@icloud.com
-  
- 
-# Init
+In collaboration with experts from MIPT and Skoltech, we created artificial intelligence that has analyzed more than 300 000 recipes and research findings on the molecular combinations of ingredients conducted by Cambridge and several other USA universities. Based on this, the AI has learned to find non-obvious connections between ingredients and understand how to pair the ingredients and how the presence of each influences the combinations of all the others. 
 
-The story of one model that generates kitchen recipes.
+# Setting up the dataset
 
+For any model you need data. That’s why to train our AI we collected over 300 000 cooking recipes.
 
-# Description
+The difficult part was not to collect them but to get them to the same form. For instance, chili pepper in recipes is listed as “chilli”, “chili”, “chiles” or even “chillis”. It’s obvious to us that all of these means “chilli” but neural network consider each of them as individual entity.
 
-  – /model_generatin_example.ipynb/ jupyter notebook which recipe generation
-  
-  – /ingredients_sematic.ipynb/ word2vec and ingredients correlation story
-  
-  – /topic_modeling.ipynb/ recipe clasterization with NLP
+Initially, we had over 100 000 unique ingredients, and after we cleaned up the data, only 1 000 unique positions were left.
 
-# _pizza_net_ README
+# Analyzing the data set
 
+Once we have got the dataset, we did an initial analysis. First, we had a quantitative assessment of how many cuisines were present in our dataset.
 
-Neural networks are gradually conquering the world, but not as a Skynet, but as a powerful tool. There are many uses for this marvelous data mining architecture, many of which are not obvious. Below we will talk about one of these applications. Pizza Recipe Generator.
+![Cuisine recipies distribution](images/image7.png)
 
-We perfectly understand that there is no limit to perfection, and you can always find solutions better, we will be glad if this happens, but now another story.
+For each cuisine, we have identified the most popular ingredients.
 
+![The most popular ingredients](images/image1.png)
 
-there is no machine learning without data.
+These graphs show differences in people’s taste preferences by country and differences in the way they combine ingredients.
 
-# Dataset
+# Pizza recipes
 
-really hard part of whole project. because of big variation in ingredients name and their bigrams and trigrams. for example pepper we found not only this word in recipes. 
-– red pepper 
-– black pepper 
-– red bell pepper 
-– green bell pepper
-– chile pepper, and many more
-it was not main problem, because sometimes we found this:
-[chili,chilli,chiles,chillis] we understand that all mistakes is chile, but if you extrapolate this mistake for all ingredients you will find, that recipe contain set of ingredients with volume more than 100000 unique. It’s not good.
+After that, we decided to analyze pizza recipes from all over the world to discover the patterns. These are the conclusions we have drawn.
 
-We clear it accurately and receive set of ingredients with depth little bit more than 1000. 
-Whole clear DATASET contain more than 300 000 recipes from different countries. Not each but, more of them contain some information about product preprocessing, quantity of each ingredient and some small description.
+## The number of pizza recipes is much lower than the recipes for meat or chicken dishes or desserts
 
+![Recipies distribution in interesting categories](images/image4.png)
 
-To see more deeper on data we can plot country cuisine histogram (most recipes from North America)
+## The number of ingredients used in pizza recipes is limited
 
-And some ingredients map for some cousines. Condiments is most popular for each one.
+![Pizza ingredient distribution](images/image8.png)
 
-And PIZZA. 
+# Model validation method
 
+![Model validation method](images/image10.png)
 
-As you can see is not so popular(not quite correctly expressed, it is popular, but limited in recipes)
+Finding actual taste combinations is not the same as figuring out molecular combinations. All cheeses have the same molecular composition, but that doesn’t mean good combinations may only come from the closest ingredients.
 
-So next part will solve this problem.
+However, it is the combinations of molecularly similar ingredients that we need to see when we convert the ingredients into mathematics. Because similar objects (the same cheeses) must remain similar, no matter how we describe them. This way we can determine if the objects are described correctly.
 
+# Converting a recipe into a mathematical form
 
-Pizza usually contain very limited set of ingredients, cheese and smth else. Let’s change it. 
+To present the recipe in a form understandable to the neural network, we used Skip-Gram Negative Sampling (SGNS) — an algorithm of word2vec, based on the occurrence of words in context.
 
-Firstly.
-If we analyze whole our dataset with magic NLP technic - WORD2VEC, we will find really cool corelation:
+We decided not to use pre-trained word2vec models because the semantic structure of the recipe is different from simple texts. And with these models, we could lose important information.
 
-This map show most closed word in semantic space to word cheese, seems good. But it’s not all. Some MIT guys create a table of MOLECULAR correlation between many ingredients, thanks them. 
+You can assess the result of word2vec by looking at the nearest semantic neighbors. For example, here is what our model knows about cheese:
 
-Whole cheeses places in one semantic group, it will help us.
+![Converting a recipe into a mathematical form](images/image5.png)
 
+To test the extent to which semantic models can capture the recipe interrelationships of ingredients, we applied a topic model. In other words, we tried to break down the recipe dataset into clusters according to mathematically determined regularities.
 
-Is it really semantic problem?
+![Converting a recipe into a mathematical form](images/image6.png)
 
-To understand is this problem can be solved semantically we us use NLTK algorithm for text topic modeling. we try to clasterize whole recipes dataset into semantic groups. 
+For all recipes, we knew determined clusters they were corresponded to. For sample recipes, we knew their connection to real clusters. Based on this we found the link between these two types of clusters.
 
-Claster number was chosen equal to 15 and here some  visual representation of result. But if we put some real labels into this model.
+![Gensim topic number](images/image3.png)
 
+The most evident was the class of desserts, which were included in the topic 0 and 1, generated by the topic model. In addition to desserts, there are almost no other classes on these topics, which suggests that desserts easily separated from other classes of dishes. Also, each topic has a class that describes it best. This means that our models have successfully managed to mathematically define the non-obvious meaning of “taste”.
 
-This histogram show that, desert(blues) will perfectly represent topic 0 and 1. And other real classes have pics in topic where other group is lower.
+# Recipe generation
 
+We used two recurring neural networks to create new recipes. For this purpose, we assumed that in the whole recipe space there is a subspace that corresponds to the pizza recipes. And for the neural network to learn how to create new pizza recipes, we had to find this subspace.
 
-So we can say that real recipe groups can be divided into clusters or groups semantically quete perfect.
+This task is similar to image autoencoding, in which we present the image as a low-dimensional vector. Such vectors can contain a lot of specific information about the image.
 
-# Deep learning
+For example, these vectors can store information about a person’s hair color in a separate cell for face recognition in a photo. We chose this approach precisely because of the unique properties of the hidden subspace.
 
-We assumed that in whole recipe space exists semi space which represent pizza or other classes.
+To identify the pizza subspace, we ran the pizza recipes through two recurring neural networks. The first one received the pizza recipe and found its representation as a latent vector. The second one received a latent vector from the first neural network and created a recipe based on it. The recipes at the input of the first neural network and at the output of the second one should have matched.
 
-?/////picture with spaces/semispaces / functional and smt cool///
+In this way, two neural networks learned how to correctly transform the recipe of a latent vector. And based on this, we were able to find a hidden subspace, which corresponds to the whole range of pizza recipes.
 
+![Recipe generation](images/image9.png)
+![Recipe generation](images/image2.png)
 
+# Molecular combinations
 
+When we solved the problem of creating a pizza recipe, we had to add molecular combination criteria to the model. To do this, we used the results of a joint study of scientists from Cambridge and several U.S. universities.
 
-So our purpose is to find this space and semi space. This task is so close to task of image autoencoding. Where picture can be represented in latent space, which represent big amount of information about this pic. We choose this approach, we want to reproduce each recipe as vector in some latent space and found semi space of Pizza recipes. 
+The study found that the ingredients with the most common molecular pairs form the best combinations. Therefore, when creating the recipe, the neural network preferred ingredients with a similar molecular structure.
 
-All recipes contains different number of ingredients (from 2,3 up to 20-30) so as we think the best model was that, which can “eat” different number of parameters in one step - RNN. 
+# Results
 
-We suggested that as in VAE we will fount latent space between two RNN models, where  recipes will grouped.
+As a result, our neural network learned to create pizza recipes. By adjusting the coefficients, the neural network can produce both classic recipes such as margaritas or pepperoni, and such unusual recipes, one of which is the heart of Opensource Pizza.
 
-We chose latent space dimension as 50d vector and start learning. 
+No | Recipe
+--- | ---
+1 | spinach, cheese, tomato, black_olive, olive, garlic, pepper, basil, citrus, melon, sprout, buttermilk, lemon, bass, nut, rutabaga
+2 | onion, tomato, olive, black_pepper, bread, dough
+3 | chicken, onion, black_olive, cheese, sauce, tomato, olive_oil, mozzarella_cheese
+4 | tomato, butter, cream_cheese, pepper, olive_oil, cheese, black_pepper, mozzarella_cheese
 
+# License
 
+Open Source Pizza is licensed under MIT License.
 
-In this picture you can see clusterization of some recipe group in latent space. And latent space with decreased dimensionality. Seems as good clasterization%)
+# Credit
 
-But it’s not all. If you remember MIT pepper they write big article about molecular correlation between ingredients. And we use their result for our approximation. If NN put for example mozarella and chicken we will move next ingredients probabilities in side of best correlation with [chicken and mozarella]
+Golodyayev Arseniy, MIPT, Skoltech, golodyaev.aa@gmail.com
 
-
-
-# Evaluating
-
-Most of recieved recipes
-
-* pizza: water, milk, cream_cheese, cheese, olive_oil, chicken, pepper, mozzarella_cheese, pepper, 
-
-* pizza: tomato, egg, milk, olive_oil, olive, garlic, cheese, mozzarella_cheese, black_pepper, chicken, 
-
-* pizza: turkey, parmesan_cheese, cheese, mozzarella_cheese, oil, garlic, tomato, black_pepper, 
-
-Pretty conservative but it’s good result for model. It means that it correctly find pizza semispace. but if we generate more, we will find interesting results……
+Egor Baryshnikov, Skoltech, bar.e.s@icloud.com
